@@ -30,14 +30,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         ListView listView = (ListView) findViewById(R.id.listView);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-
+        showProgressBar();
         mController = new VideosController();
-        mAdapter = new VideoListAdapter(this, new ArrayList<Video>());
+        mAdapter = new VideoListAdapter(this, R.layout.list_item_video, mController.getVideos());
+//        mAdapter = new VideoListAdapter(this, new ArrayList<Video>());
 
         listView.setAdapter(mAdapter);
 
         prepareData();
         displayListOfVideos();
+        hideProgressBar();
     }
 
     private void prepareData() {
@@ -54,15 +56,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void displayListOfVideos() {
-        // TODO: Implement this method
+        mController.getVideos();
     }
 
     public void showProgressBar() {
-        // TODO: Implement this method
+        mProgressBar.setVisibility(View.VISIBLE);
     }
 
     public void hideProgressBar() {
-        // TODO: Implement this method
+        mProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override

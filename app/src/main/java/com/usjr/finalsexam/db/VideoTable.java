@@ -11,6 +11,8 @@ import com.usjr.finalsexam.entity.Video;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.usjr.finalsexam.db.VideoTable.VideoEntry.TABLE_NAME;
+
 public class VideoTable {
 
     /**
@@ -23,15 +25,15 @@ public class VideoTable {
         public static final String COL_THUMBNAIL_URL = "ThumbnailUrl";
     }
 
-    private static final String CREATE_TABLE = "CREATE TABLE " + VideoEntry.TABLE_NAME + " (" +
+    private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
             VideoEntry._ID + " TEXT PRIMARY KEY, " +
             VideoEntry.COL_TITLE + " TEXT, " +
             VideoEntry.COL_DESCRIPTION + " TEXT, " +
             VideoEntry.COL_THUMBNAIL_URL + " TEXT)";
 
-    private static final String DROP_TABLE = "DROP TABLE IF EXISTS " + VideoEntry.TABLE_NAME;
+    private static final String DROP_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;
 
-    private static final String SELECT_QUERY = "SELECT * FROM " + VideoEntry.TABLE_NAME;
+    private static final String SELECT_QUERY = "SELECT * FROM " + TABLE_NAME;
 
     public static String createTableQuery() {
         return CREATE_TABLE;
@@ -51,8 +53,11 @@ public class VideoTable {
     }
 
     private static Video createVideoFromCursor(Cursor cursor) {
-        // TODO: Implement this method
-        return null;
+        if(cursor != null){
+            cursor.moveToFirst();
+        }
+        Video video = new Video(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        return video;
     }
 
     public static long insertVideo(Context context, Video video) {
@@ -61,7 +66,7 @@ public class VideoTable {
         try {
             ContentValues values = createValuesFromVideo(video);
             db = DbHandler.getInstance(context).getWritableDatabase();
-            return db.insert(VideoEntry.TABLE_NAME, null, values);
+            return db.insert(TABLE_NAME, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -82,7 +87,7 @@ public class VideoTable {
 
         try {
             db = DbHandler.getInstance(context).getWritableDatabase();
-            return db.delete(VideoEntry.TABLE_NAME, null, null);
+            return db.delete(TABLE_NAME, null, null);
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -119,11 +124,22 @@ public class VideoTable {
 
     public static List<Video> getAllVideos(Context context) {
         List<Video> videos = new ArrayList<>();
-        SQLiteDatabase db = null;
-        Cursor cursor = null;
+        String selectQuery = "SELECT * FROM Video";
+//        SQLiteDatabase db = null;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
         try {
             // TODO: Implement retrieval of all video items from the database
+            if (cursor.moveToFirst()) {
+                do {
+                    Video video = new Video();
+                    video.setId(cursor.getString(0));
+                    video.setTitle(cursor.getString(1));
+                    video.setDescription(cursor.getString(2));
+                    video.setDescription(cursor.getString(3));
+                } while (cursor.moveToNext());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

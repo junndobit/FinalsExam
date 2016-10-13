@@ -18,7 +18,15 @@ import java.util.List;
 public class VideoListAdapter extends BaseAdapter {
 
     private Context     mContext;
+    private int         mResource;
     private List<Video> mVideos;
+
+
+    public VideoListAdapter(Context mContext, int mResource, List<Video> mVideos) {
+        this.mContext = mContext;
+        this.mResource = mResource;
+        this.mVideos = mVideos;
+    }
 
     public VideoListAdapter(Context context, List<Video> videos) {
         mContext = context;
